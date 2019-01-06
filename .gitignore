@@ -1,0 +1,6 @@
+/.vs
+/x86-Debug
+/x86-Release
+/*vcxproj*
+/build
+/lib

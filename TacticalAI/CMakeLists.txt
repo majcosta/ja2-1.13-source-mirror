@@ -1,0 +1,15 @@
+add_library(TacticalAI STATIC
+"AIList.cpp"
+"AIMain.cpp"
+"AIUtils.cpp"
+"Attacks.cpp"
+"CreatureDecideAction.cpp"
+"DecideAction.cpp"
+"FindLocations.cpp"
+"Knowledge.cpp"
+"Medical.cpp"
+"Movement.cpp"
+"NPC.cpp"
+"PanicButtons.cpp"
+"QuestDebug.cpp"
+"Realtime.cpp")

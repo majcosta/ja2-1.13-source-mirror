@@ -1,0 +1,12 @@
+add_library(ModularizedTacticalAI STATIC "AbstractPlanFactory.cpp"
+"CrowPlan.cpp"
+"LegacyAIPlan.cpp"
+"LegacyAIPlanFactory.cpp"
+"LegacyArmedVehiclePlan.cpp"
+"LegacyCreaturePlan.cpp"
+"LegacyZombiePlan.cpp"
+"NullPlan.cpp"
+"NullPlanFactory.cpp"
+"Plan.cpp"
+"PlanFactoryLibrary.cpp"
+"PlanList.cpp")

@@ -1,0 +1,56 @@
+﻿{
+  "configurations": [
+    {
+      "name": "x86-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [
+        "msvc_x86"
+      ],
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "installRoot": "${projectDir}\\build\\${name}\\install",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": ""
+    },
+    {
+      "name": "x86-Release",
+      "generator": "Ninja",
+      "configurationType": "Release",
+      "inheritEnvironments": [
+        "msvc_x86"
+      ],
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "installRoot": "${projectDir}\\build\\${name}\\install",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": ""
+    },
+    {
+      "name": "MapEditor-x86-Release",
+      "generator": "Ninja",
+      "configurationType": "Release",
+      "inheritEnvironments": [
+        "msvc_x86"
+      ],
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "installRoot": "${projectDir}\\build\\${name}\\install",
+      "cmakeCommandArgs": "-DJA2EDITOR=ON",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": ""
+    },
+    {
+      "name": "MapEditor-x86-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [
+        "msvc_x86"
+      ],
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "installRoot": "${projectDir}\\build\\${name}\\install",
+      "cmakeCommandArgs": "-DJA2EDITOR=ON",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": ""
+    }
+  ]
+}
