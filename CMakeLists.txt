@@ -6,60 +6,61 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if(MSVC)
-
-	# Replace /MD compiler flag with /MT
-	set(CompilerFlags
+if(MSVC)	
+	set(CompilerFlags # Replace /MD compiler flag with /MT
         CMAKE_CXX_FLAGS
         CMAKE_CXX_FLAGS_DEBUG
         CMAKE_CXX_FLAGS_RELEASE
+		CMAKE_CXX_FLAGS_RELWITHDEBINFO
         CMAKE_C_FLAGS
         CMAKE_C_FLAGS_DEBUG
         CMAKE_C_FLAGS_RELEASE
+		CMAKE_C_FLAGS_RELWITHDEBINFO
         )
 	foreach(CompilerFlag ${CompilerFlags})
 		string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
 	endforeach()
 	
-	# Compiler and linker flags for debug/release
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /JMC /GS /analyze- /Gm- /Zc:inline /fp:precise /Zc:forScope /Oy- /FC /nologo")
-	set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NXCOMPAT /SAFESEH:NO")
+	# Compiler flags for debug/release based on VS2017 sln/vcprojx files
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zc:inline /Oy- /FC")
 
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /GS /analyze- /Gy /Zc:wchar_t /Zc:inline /fp:precise /Zc:forScope /Oy- /Oi /FC /nologo")	
-	set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /NXCOMPAT /OPT:REF /SAFESEH:NO /OPT:ICF")
+	set(JA2_RELEASE_CXX_FLAGS "/Gy /Zc:inline /Oi /FC") # common to both Release and RelWithDebInfo
+
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${JA2_RELEASE_CXX_FLAGS}")
+	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${JA2_RELEASE_CXX_FLAGS}")
+	
+	if(JA2EDITOR MATCHES ON) # This variable is passed to CMake (or isn't) by the CMakeSettings.json scheme in the "cmakeCommandArgs parameter of the MapEditor configurations
+		add_compile_definitions(JA2EDITOR)
+		set(JA2_TARGET_NAME "MapEditor")
+		add_compile_definitions(JA2BETAVERSION)
+	else()
+		set(JA2_TARGET_NAME "Ja2")
+	endif()
 endif()
 
-add_compile_definitions(JA2 CINTERFACE XML_STATIC VFS_STATIC VFS_WITH_SLF VFS_WITH_7ZIP USE_VFS ENGLISH)
+add_compile_definitions(JA2 CINTERFACE XML_STATIC USE_VFS VFS_STATIC VFS_WITH_SLF VFS_WITH_7ZIP ENGLISH)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug) # debug specific preprocessor flags
 	add_compile_definitions(JA2BETAVERSION JA2TESTVERSION DEBUG_ATTACKBUSY)
-#elseif(CMAKE_BUILD_TYPE MATCHES Release) # release specific preprocessor flags would go here but I couldn't find any
-endif()
-
-if(JA2EDITOR MATCHES ON)
-	add_compile_definitions(JA2EDITOR)
-	set(JA2_EXE_NAME "MapEditor")
-else()
-	set(JA2_EXE_NAME "Ja2")
 endif()
 
 include_directories("Standard Gaming Platform" 
-"ext/vfs/include"
-"utils"
-"Tactical"
-"Laptop"
-"."
-"Strategic"
-"TileEngine"
-"Multiplayer"
-"Editor"
-"TacticalAI"
-"Res"
-"lua"
-"Multiplayer/raknet"
-"Console"
-"ext/libpng"
-"ModularizedTacticalAI/include")
+	"ext/vfs/include"
+	"utils"
+	"Tactical"
+	"Laptop"
+	"."
+	"Strategic"
+	"TileEngine"
+	"Multiplayer"
+	"Editor"
+	"TacticalAI"
+	"Res"
+	"lua"
+	"Multiplayer/raknet"
+	"Console"
+	"ext/libpng"
+	"ModularizedTacticalAI/include")
 
 add_subdirectory("ext/zlib")
 add_subdirectory("ext/VFS")
@@ -75,82 +76,82 @@ add_subdirectory("Laptop")
 add_subdirectory("Console")
 add_subdirectory("Tactical")
 add_subdirectory("ModularizedTacticalAI/src")
+add_subdirectory("ext/export")
 
-add_executable(${JA2_EXE_NAME} WIN32 "Credits.cpp"
-"Fade Screen.cpp"
-"GameInitOptionsScreen.cpp"
-"GameSettings.cpp"
-"GameVersion.cpp"
-"HelpScreen.cpp"
-"Init.cpp"
-"Intro.cpp"
-"JA2 Splash.cpp"
-"Ja25Update.cpp"
-"Language Defines.cpp"
-"Loading Screen.cpp"
-"MPChatScreen.cpp"
-"MPConnectScreen.cpp"
-"MPHostScreen.cpp"
-"MPJoinScreen.cpp"
-"MPScoreScreen.cpp"
-"MPXmlTeams.cpp"
-"MainMenuScreen.cpp"
-"MessageBoxScreen.cpp"
-"Options Screen.cpp"
-"SaveLoadGame.cpp"
-"SaveLoadScreen.cpp"
-"Screens.cpp"
-"Sys Globals.cpp"
-"XML_DifficultySettings.cpp"
-"XML_IntroFiles.cpp"
-"XML_Layout_MainMenu.cpp"
-"aniviewscreen.cpp"
-"gameloop.cpp"
-"gamescreen.cpp"
-"jascreens.cpp"
-"legion cfg.cpp"
-"profiler.cpp"
-"Multiplayer/client.cpp"
-"Multiplayer/server.cpp"
-"Multiplayer/transfer_rules.cpp"
-"Res/ja2.rc")
+set(JA2_SOURCES "Credits.cpp"
+	"Fade Screen.cpp"
+	"GameInitOptionsScreen.cpp"
+	"GameSettings.cpp"
+	"GameVersion.cpp"
+	"HelpScreen.cpp"
+	"Init.cpp"
+	"Intro.cpp"
+	"JA2 Splash.cpp"
+	"Ja25Update.cpp"
+	"Language Defines.cpp"
+	"Loading Screen.cpp"
+	"MPChatScreen.cpp"
+	"MPConnectScreen.cpp"
+	"MPHostScreen.cpp"
+	"MPJoinScreen.cpp"
+	"MPScoreScreen.cpp"
+	"MPXmlTeams.cpp"
+	"MainMenuScreen.cpp"
+	"MessageBoxScreen.cpp"
+	"Options Screen.cpp"
+	"SaveLoadGame.cpp"
+	"SaveLoadScreen.cpp"
+	"Screens.cpp"
+	"Sys Globals.cpp"
+	"XML_DifficultySettings.cpp"
+	"XML_IntroFiles.cpp"
+	"XML_Layout_MainMenu.cpp"
+	"aniviewscreen.cpp"
+	"gameloop.cpp"
+	"gamescreen.cpp"
+	"jascreens.cpp"
+	"legion cfg.cpp"
+	"profiler.cpp"
+	"Multiplayer/client.cpp"
+	"Multiplayer/server.cpp"
+	"Multiplayer/transfer_rules.cpp"
+	"Res/ja2.rc")
 
-target_link_libraries(${JA2_EXE_NAME}
-"Winmm.lib"
-"${PROJECT_SOURCE_DIR}/Multiplayer/raknet/RakNetLibStatic.lib"
-"ws2_32.lib"
-"DbgHelp.lib"
-Console
-Editor
-Laptop
-lua
-SGP
-Strategic
-Tactical
-TacticalAI
-ModularizedTacticalAI
-TileEngine
-Utils
-bfVFS
-7z
-libpng
-zlib
-"${PROJECT_SOURCE_DIR}/libexpatMT.lib"
-"${PROJECT_SOURCE_DIR}/mss32.lib"
-"${PROJECT_SOURCE_DIR}/SMACKW32.lib"
-"${PROJECT_SOURCE_DIR}/binkw32.lib"
-"${PROJECT_SOURCE_DIR}/fmodvc.lib"
-"${PROJECT_SOURCE_DIR}/lua51.lib"
-"${PROJECT_SOURCE_DIR}/VtuneApi.lib"
-"${PROJECT_SOURCE_DIR}/Standard Gaming Platform/ddraw.lib"
-)
+set(JA2_LIBRARIES "Winmm.lib"
+	"${PROJECT_SOURCE_DIR}/Multiplayer/raknet/RakNetLibStatic.lib"
+	"ws2_32.lib"
+	"DbgHelp.lib"
+	Console
+	Editor
+	Laptop
+	lua
+	SGP
+	Strategic
+	Tactical
+	TacticalAI
+	ModularizedTacticalAI
+	TileEngine
+	Utils
+	bfVFS
+	7z
+	libpng
+	zlib
+	"${PROJECT_SOURCE_DIR}/libexpatMT.lib"
+	"${PROJECT_SOURCE_DIR}/mss32.lib"
+	"${PROJECT_SOURCE_DIR}/SMACKW32.lib"
+	"${PROJECT_SOURCE_DIR}/binkw32.lib"
+	"${PROJECT_SOURCE_DIR}/fmodvc.lib"
+	"${PROJECT_SOURCE_DIR}/lua51.lib"
+	"${PROJECT_SOURCE_DIR}/VtuneApi.lib"
+	"${PROJECT_SOURCE_DIR}/Standard Gaming Platform/ddraw.lib"
+	"odbc32.lib" 
+	"odbccp32.lib"
+#	"legacy_stdio_definitions.lib"
+	)
 
-### Apparently this doesn't build
-
-#add_executable(ja2export WIN32 "${ja2export_SOURCE_DIR}/main.cpp" "${ja2export_SOURCE_DIR}/init_vfs.cpp" "${ja2export_SOURCE_DIR}/progress_bar.cpp")
-#target_include_directories(ja2export PRIVATE "ext/export/src" "ext/export/src/ja2")
-#target_link_libraries(ja2export bfVFS 7z libpng zlib)
-
+add_executable(${JA2_TARGET_NAME} WIN32 ${JA2_SOURCES})
+add_dependencies(${JA2_TARGET_NAME} 7z Console Editor Laptop libpng lua ModularizedTacticalAI SGP Strategic Tactical TacticalAI TileEngine Utils bfVFS zlib)
+target_link_libraries(${JA2_TARGET_NAME} ${JA2_LIBRARIES})
 
 # If uncommented, lists all known CMake variables at this point - Useful for debugging
 #get_cmake_property(_variableNames VARIABLES)
